@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { signIn } from "next-auth/react";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -29,7 +30,14 @@ const Login = () => {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => console.log(data);
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: true,
+      callbackUrl: "/",
+    });
+  };
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -73,7 +81,7 @@ const Login = () => {
               )}
             ></FormField>
             <Button type="submit" className="w-full">
-              Register
+              Login
             </Button>
           </form>
         </Form>
