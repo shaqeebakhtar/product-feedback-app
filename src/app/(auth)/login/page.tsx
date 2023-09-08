@@ -35,7 +35,7 @@ const Login = () => {
       email: data.email,
       password: data.password,
       redirect: true,
-      callbackUrl: "/",
+      callbackUrl: "/feedbacks",
     });
   };
 
