@@ -17,12 +17,10 @@ import { signIn } from "next-auth/react";
 import * as z from "zod";
 
 const formSchema = z.object({
-  email: z.string().email({
+  email: z.string({ required_error: "Email is required" }).email({
     message: "Invalid email",
   }),
-  password: z.string().min(8, {
-    message: "Password must be atleat 8 characters",
-  }),
+  password: z.string({ required_error: "Password is required" }),
 });
 
 const Login = () => {
@@ -41,7 +39,7 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="p-8 rounded-md border max-w-[25rem] w-full mx-4 bg-card shadow-sm">
+      <div className="p-8 rounded-md border max-w-[30rem] w-full mx-4 bg-card shadow-sm">
         <div className="flex flex-col space-y-1 mb-6">
           <h3 className="font-semibold tracking-tight text-2xl">
             Login to your Account
@@ -80,7 +78,10 @@ const Login = () => {
                 </FormItem>
               )}
             ></FormField>
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
               Login
             </Button>
           </form>

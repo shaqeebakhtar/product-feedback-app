@@ -36,7 +36,7 @@ const Register = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="p-8 rounded-md border max-w-[25rem] w-full mx-4 bg-card shadow-sm">
+      <div className="p-8 rounded-md border max-w-[30rem] w-full mx-4 bg-card shadow-sm">
         <div className="flex flex-col space-y-1 mb-6">
           <h3 className="font-semibold tracking-tight text-2xl">
             Create an account
@@ -87,7 +87,10 @@ const Register = () => {
                 </FormItem>
               )}
             ></FormField>
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
               Register
             </Button>
           </form>
