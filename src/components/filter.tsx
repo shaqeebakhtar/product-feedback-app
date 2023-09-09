@@ -8,30 +8,32 @@ const Filter = (props: Props) => {
   const [active, setActive] = useState("UI");
 
   return (
-    <div className="bg-white p-6 shadow-sm rounded-md flex gap-x-3 gap-y-4 flex-wrap">
-      <span
-        className={
-          active === "All"
-            ? "cursor-pointer py-2 px-4 bg-blue-500 text-white rounded-xl text-sm font-bold hover:bg-blue-600"
-            : "cursor-pointer py-2 px-4 bg-blue-50 text-blue-500 rounded-xl text-sm font-bold hover:bg-blue-100"
-        }
-        onClick={() => setActive("All")}
-      >
-        All
-      </span>
-      {filterOptions.map((option, index) => (
-        <span
-          key={index}
+    <div className="bg-white p-8 shadow-sm rounded-lg h-max">
+      <div className="flex gap-x-3 gap-y-4 flex-wrap">
+        <button
           className={
-            active === option
+            active === "All"
               ? "cursor-pointer py-2 px-4 bg-blue-500 text-white rounded-xl text-sm font-bold hover:bg-blue-600"
               : "cursor-pointer py-2 px-4 bg-blue-50 text-blue-500 rounded-xl text-sm font-bold hover:bg-blue-100"
           }
-          onClick={() => setActive(option)}
+          onClick={() => setActive("All")}
         >
-          {option}
-        </span>
-      ))}
+          All
+        </button>
+        {filterOptions.map((option, index) => (
+          <button
+            key={index}
+            className={
+              active === option
+                ? "cursor-pointer py-2 px-4 bg-blue-500 text-white rounded-xl text-sm font-bold hover:bg-blue-600"
+                : "cursor-pointer py-2 px-4 bg-blue-50 text-blue-500 rounded-xl text-sm font-bold hover:bg-blue-100"
+            }
+            onClick={() => setActive(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
