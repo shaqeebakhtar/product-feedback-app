@@ -1,14 +1,14 @@
 import { Plus } from "lucide-react";
+import Logout from "./logout";
 import { Button } from "./ui/button";
+import { Label } from "./ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Label } from "./ui/label";
 
 const Header = () => {
   return (
@@ -53,10 +53,13 @@ const Header = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button className="bg-purple-600 hover:bg-purple-700 font-bold flex gap-1">
-          <Plus size={16} strokeWidth={3} />
-          Add Feedback
-        </Button>
+        <div className="flex space-x-4">
+          <Button className="bg-purple-600 hover:bg-purple-700 font-bold flex gap-1">
+            <Plus size={16} strokeWidth={3} />
+            Add Feedback
+          </Button>
+          <Logout />
+        </div>
       </div>
     </header>
   );

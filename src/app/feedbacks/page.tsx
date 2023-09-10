@@ -1,10 +1,17 @@
-import Comments from "@/components/comments";
 import Feedback from "@/components/feedback";
 import Filter from "@/components/filter";
 import Header from "@/components/header";
-import PostComment from "@/components/post-comment";
+import { redirect } from "next/navigation";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 
-const Feedbacks = () => {
+const Feedbacks = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <div className="container mx-auto py-8">
       <div className="grid grid-cols-4 gap-6">

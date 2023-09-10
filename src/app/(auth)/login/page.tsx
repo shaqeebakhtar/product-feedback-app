@@ -57,7 +57,7 @@ const Login = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      type="email"
+                      type="text"
                       placeholder="example@domain.com"
                       {...field}
                     />
