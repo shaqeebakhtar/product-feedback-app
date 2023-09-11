@@ -1,3 +1,5 @@
+"use client";
+
 import { Plus } from "lucide-react";
 import Logout from "./logout";
 import { Button } from "./ui/button";
@@ -9,8 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
+  const router = useRouter();
+
   return (
     <header>
       <div className="bg-slate-800 px-4 py-3 rounded-lg flex justify-between items-center">
@@ -54,7 +59,10 @@ const Header = () => {
           </Select>
         </div>
         <div className="flex space-x-4">
-          <Button className="bg-purple-600 hover:bg-purple-700 font-bold flex gap-1">
+          <Button
+            onClick={() => router.push("/add-feedback")}
+            className="bg-purple-600 hover:bg-purple-700 font-bold flex gap-1"
+          >
             <Plus size={16} strokeWidth={3} />
             Add Feedback
           </Button>

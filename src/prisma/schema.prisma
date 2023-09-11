@@ -8,10 +8,50 @@ datasource db {
 }
 
 model User {
+  id        String     @id @default(uuid())
+  email     String
+  password  String
+  feedbacks Feedback[]
+
+  @@unique([email])
+}
+
+model Username {
   id       String @id @default(uuid())
   username String
-  email    String
-  password String
+  userId   String
 
-  @@unique([username, email])
+  @@unique([username])
+}
+
+model Feedback {
+  id               String    @id @default(uuid())
+  title            String
+  tag              String
+  details          String    @db.Text
+  upvotes          Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  numberOfComments Int       @default(0)
+  creator          User      @relation(fields: [creatorId], references: [id])
+  creatorId        String
+  comments         Comment[]
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  text       String   @db.Text
+  creatorId  String
+  userId     String
+  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+  feedbackId String
+  replies    Reply[]
+}
+
+model Reply {
+  id        String  @id @default(uuid())
+  creatorId String
+  repliedTo String
+  comment   Comment @relation(fields: [commentId], references: [id])
+  commentId String
 }
