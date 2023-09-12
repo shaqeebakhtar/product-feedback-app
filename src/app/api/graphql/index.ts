@@ -1,4 +1,4 @@
-import { authTypes, authMutations } from "./auth";
+import { authTypes, authMutations, authQuery } from "./auth";
 
 export const typeDefs = `
     ${authTypes}
@@ -6,7 +6,7 @@ export const typeDefs = `
 
 export const resolvers = {
   Query: {
-    hello: () => "world",
+    ...authQuery,
   },
 
   Mutation: {

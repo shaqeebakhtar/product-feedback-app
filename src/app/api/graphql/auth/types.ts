@@ -5,8 +5,14 @@ export const authTypes = `#graphql
         email: String
     }
 
+    type Username{
+        id: String
+        username: String
+        userId: String
+    }
+
     type Query {
-        hello: String   
+        username(username: String!):  Username  
     }
 
     type Mutation{

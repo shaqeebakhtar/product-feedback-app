@@ -11,32 +11,63 @@ const registerSchema = z.object({
 
 export const authMutations = {
   register: async (obj: any, args: z.infer<typeof registerSchema>) => {
-    const { username, email, password } = registerSchema.parse(args);
+    const {
+      username: inputUsername,
+      email,
+      password,
+    } = registerSchema.parse(args);
 
     const usernameExists = await prisma.username.findUnique({
       where: {
-        username,
+        username: inputUsername,
       },
     });
 
     if (usernameExists) {
-      return new GraphQLError("username already exists", {
-        extensions: { code: "DUPLICATE_INPUT" },
+      return new GraphQLError("Username already exists", {
+        extensions: {
+          code: "USERNAME_EXISTS",
+          http: {
+            status: 422,
+          },
+        },
       });
     }
 
-    const hashedPassword = await generateHash(password);
-
-    const user = await prisma.user.findUnique({
+    const userExists = await prisma.user.findUnique({
       where: {
         email,
       },
     });
 
-    return {
-      username,
-      email,
-      password,
+    if (userExists) {
+      return new GraphQLError("Email already in use", {
+        extensions: { code: "EMAIL_IN_USE" },
+      });
+    }
+
+    const hashedPassword = await generateHash(password);
+
+    const createdUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    const createdUsername = await prisma.username.create({
+      data: {
+        userId: createdUser.id,
+        username: inputUsername,
+      },
+    });
+
+    const user = {
+      id: createdUser.id,
+      username: createdUsername.username,
+      email: createdUser.email,
     };
+
+    return user;
   },
 };
