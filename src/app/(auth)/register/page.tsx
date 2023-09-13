@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { GraphQLClient, gql } from "graphql-request";
 
 const formSchema = z.object({
   username: z.string({ required_error: "Username is required" }).min(4, {
@@ -27,12 +29,32 @@ const formSchema = z.object({
   }),
 });
 
+const USERNAME_EXISTS = gql`
+  query UsernameExists($username: String!) {
+    username(username: $username) {
+      userId
+    }
+  }
+`;
+
+const graphQLClient = new GraphQLClient("/api/graphql");
+
 const Register = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => console.log(data);
+
+  const username = "name5";
+
+  const { data, isLoading }: any = useQuery({
+    queryKey: ["username"],
+    queryFn: async () =>
+      await graphQLClient.request(USERNAME_EXISTS, { username }),
+  });
+
+  if (!isLoading) console.log("data:", data);
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -55,7 +77,11 @@ const Register = () => {
                   <FormControl>
                     <Input placeholder="username" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage>
+                    {!isLoading && data?.username
+                      ? "Username already taken"
+                      : ""}
+                  </FormMessage>
                 </FormItem>
               )}
             ></FormField>
