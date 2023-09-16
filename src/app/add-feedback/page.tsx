@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -34,6 +35,8 @@ const createFeedbackSchema = z.object({
 });
 
 const CreateFeedback = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof createFeedbackSchema>>({
     resolver: zodResolver(createFeedbackSchema),
   });
@@ -126,7 +129,13 @@ const CreateFeedback = () => {
                 )}
               ></FormField>
               <div className="flex gap-3 justify-end">
-                <Button className="bg-slate-800">Cancel</Button>
+                <Button
+                  type="reset"
+                  className="bg-slate-800"
+                  onClick={() => router.push("/feedbacks")}
+                >
+                  Cancel
+                </Button>
                 <Button
                   type="submit"
                   className="bg-purple-600 hover:bg-purple-700"

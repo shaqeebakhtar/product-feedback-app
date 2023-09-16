@@ -18,7 +18,11 @@ export const authOptions: AuthOptions = {
       },
 
       async authorize(credentials, req) {
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+        const user = prisma.user.findUnique({
+          where: {
+            email: credentials?.email,
+          },
+        });
 
         if (user) {
           return user;
@@ -28,7 +32,21 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
-  callbacks: {},
+  callbacks: {
+    jwt: async ({ user, token }) => {
+      if (user) token.id = user.id;
+
+      return token;
+    },
+
+    session: async ({ session, token }) => {
+      if (session?.user) {
+        session.user.id = token.id as string;
+      }
+
+      return session;
+    },
+  },
   pages: {
     signIn: "/login",
   },

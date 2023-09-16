@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { GraphQLClient, gql } from "graphql-request";
+import Link from "next/link";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import * as z from "zod";
 
 const formSchema = z.object({
   username: z.string({ required_error: "Username is required" }).min(4, {
@@ -37,24 +38,69 @@ const USERNAME_EXISTS = gql`
   }
 `;
 
+const REGISTER = gql`
+  mutation Mutation($username: String!, $email: String!, $password: String!) {
+    register(username: $username, email: $email, password: $password) {
+      id
+      username
+      email
+    }
+  }
+`;
+
 const graphQLClient = new GraphQLClient("/api/graphql");
 
 const Register = () => {
+  const [username, setUsername] = useState("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => console.log(data);
-
-  const username = "name5";
-
-  const { data, isLoading }: any = useQuery({
-    queryKey: ["username"],
+  const {
+    data: usernameQuery,
+    isLoading,
+    refetch: usernameRefetch,
+  }: any = useQuery({
+    queryKey: ["username", username],
     queryFn: async () =>
       await graphQLClient.request(USERNAME_EXISTS, { username }),
+    enabled: false,
+    refetchOnMount: false,
   });
 
-  if (!isLoading) console.log("data:", data);
+  const checkUsername = async () => {
+    if (username) usernameRefetch();
+
+    if (!isLoading && usernameQuery?.username) {
+      form.setError("username", {
+        type: "custom",
+        message: "Username already in use",
+      });
+    }
+  };
+
+  const registerMutation = useMutation({
+    mutationKey: ["register"],
+    mutationFn: async (data: z.infer<typeof formSchema>) =>
+      await graphQLClient.request(REGISTER, {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      }),
+  });
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (data.username) usernameRefetch();
+
+    registerMutation.mutate({
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    });
+
+    if (Object.keys(form.formState.errors).length == 0) console.log(data);
+  };
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -71,22 +117,28 @@ const Register = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               name="username"
+              control={form.control}
               render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="username" {...field} />
+                    <Input
+                      placeholder="username"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setUsername(e.target.value);
+                      }}
+                      onBlur={() => checkUsername()}
+                    />
                   </FormControl>
-                  <FormMessage>
-                    {!isLoading && data?.username
-                      ? "Username already taken"
-                      : ""}
-                  </FormMessage>
+                  <FormMessage />
                 </FormItem>
               )}
             ></FormField>
             <FormField
               name="email"
+              control={form.control}
               render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Email</FormLabel>
@@ -103,6 +155,7 @@ const Register = () => {
             ></FormField>
             <FormField
               name="password"
+              control={form.control}
               render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Password</FormLabel>

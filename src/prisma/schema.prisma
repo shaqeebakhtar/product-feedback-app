@@ -11,15 +11,19 @@ model User {
   id        String     @id @default(uuid())
   email     String
   password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   feedbacks Feedback[]
 
   @@unique([email])
 }
 
 model Username {
-  id       String @id @default(uuid())
-  username String
-  userId   String
+  id        String   @id @default(uuid())
+  username  String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([username])
 }
@@ -43,15 +47,19 @@ model Comment {
   text       String   @db.Text
   creatorId  String
   userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   feedback   Feedback @relation(fields: [feedbackId], references: [id])
   feedbackId String
   replies    Reply[]
 }
 
 model Reply {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   creatorId String
   repliedTo String
-  comment   Comment @relation(fields: [commentId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comment   Comment  @relation(fields: [commentId], references: [id])
   commentId String
 }
