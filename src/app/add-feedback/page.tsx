@@ -19,7 +19,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { graphQLClient } from "@/lib/graphql-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { gql } from "graphql-request";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,6 +37,17 @@ const createFeedbackSchema = z.object({
   details: z.string({ required_error: "Details cannot be empty" }),
 });
 
+const ADD_FEEDBACK = gql`
+  mutation Mutation($title: String!, $tag: String!, $details: String!) {
+    addFeedback(title: $title, tag: $tag, details: $details) {
+      id
+      title
+      tag
+      details
+    }
+  }
+`;
+
 const CreateFeedback = () => {
   const router = useRouter();
 
@@ -41,8 +55,25 @@ const CreateFeedback = () => {
     resolver: zodResolver(createFeedbackSchema),
   });
 
+  const addFeedbackMutation = useMutation({
+    mutationKey: ["addFeedback"],
+    mutationFn: async (data: z.infer<typeof createFeedbackSchema>) => {
+      return await graphQLClient.request(ADD_FEEDBACK, {
+        title: data.title,
+        tag: data.category,
+        details: data.details,
+      });
+    },
+  });
+
   const onSubmit = (data: z.infer<typeof createFeedbackSchema>) => {
-    console.log(data);
+    addFeedbackMutation.mutate({
+      title: data.title,
+      category: data.category,
+      details: data.details,
+    });
+
+    if (addFeedbackMutation?.data.addFeedback) router.push("/feedbacks");
   };
 
   return (
@@ -139,6 +170,7 @@ const CreateFeedback = () => {
                 <Button
                   type="submit"
                   className="bg-purple-600 hover:bg-purple-700"
+                  disabled={addFeedbackMutation.isLoading}
                 >
                   Add Feedback
                 </Button>

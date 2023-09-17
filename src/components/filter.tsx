@@ -8,7 +8,7 @@ const Filter = (props: Props) => {
   const [active, setActive] = useState("UI");
 
   return (
-    <div className="bg-white p-8 shadow-sm rounded-lg h-max">
+    <div className="bg-white p-8 shadow-sm rounded-lg h-max sticky top-8">
       <div className="flex gap-x-3 gap-y-4 flex-wrap">
         <button
           className={

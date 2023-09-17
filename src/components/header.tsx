@@ -18,7 +18,7 @@ const Header = () => {
 
   return (
     <header>
-      <div className="bg-slate-800 px-4 py-3 rounded-lg flex justify-between items-center">
+      <div className="bg-slate-800 px-4 py-3 rounded-lg flex justify-between items-center sticky top-8 shadow-lg">
         <div className="flex items-center text-white">
           <Label htmlFor="sort-feedbacks" className="text-sm font-normal">
             Sort by:

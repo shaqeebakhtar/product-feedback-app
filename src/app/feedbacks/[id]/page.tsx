@@ -1,19 +1,44 @@
+"use client";
+
 import Comments from "@/components/comments";
 import Feedback from "@/components/feedback";
 import PostComment from "@/components/post-comment";
 import { Button } from "@/components/ui/button";
+import { graphQLClient } from "@/lib/graphql-client";
+import { useQuery } from "@tanstack/react-query";
+import { gql } from "graphql-request";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-type Props = {};
+const FEEDBACK = gql`
+  query GetFeedback($feedbackId: String!) {
+    getFeedback(feedbackId: $feedbackId) {
+      id
+      title
+      tag
+      details
+      upvotes
+      numberOfComments
+    }
+  }
+`;
 
-const page = (props: Props) => {
+const FeedbackPage = ({ params }: { params: { id: string } }) => {
+  const feedbackQuery = useQuery({
+    queryKey: ["feedback", params.id],
+    queryFn: async () => {
+      return await graphQLClient.request(FEEDBACK, { feedbackId: params.id });
+    },
+  });
+
+  if (feedbackQuery.isLoading) return <h1>Loading...</h1>;
+
   return (
     <div className="container mx-auto py-8 max-w-4xl">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <Link
-            href="/"
+            href="/feedbacks"
             className="bg-transparent hover:bg-blue-100 font-bold flex items-center gap-2 px-4 py-2 rounded-md"
           >
             <ChevronLeft size={16} strokeWidth={3} className="text-blue-500" />
@@ -23,7 +48,7 @@ const page = (props: Props) => {
             Edit Feedback
           </Button>
         </div>
-        <Feedback />
+        <Feedback feedback={feedbackQuery?.data.getFeedback} />
         <Comments />
         <PostComment />
       </div>
@@ -31,4 +56,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default FeedbackPage;

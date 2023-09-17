@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { graphQLClient } from "@/lib/graphql-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GraphQLClient, gql } from "graphql-request";
@@ -47,8 +48,6 @@ const REGISTER = gql`
     }
   }
 `;
-
-const graphQLClient = new GraphQLClient("/api/graphql");
 
 const Register = () => {
   const [username, setUsername] = useState("");

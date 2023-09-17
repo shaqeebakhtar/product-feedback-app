@@ -10,7 +10,7 @@ export const feedbackTypes = `#graphql
     }
 
     type Query{
-        getFeedbacks: [Feedback!]
+        getFeedbacks: [Feedback!]!
 
         getFeedback(feedbackId: String!): Feedback 
     }

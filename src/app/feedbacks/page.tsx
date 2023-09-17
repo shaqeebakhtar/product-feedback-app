@@ -1,9 +1,9 @@
-import Feedback from "@/components/feedback";
+import FeedbacksComp from "@/components/feedbacks";
 import Filter from "@/components/filter";
 import Header from "@/components/header";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import { getServerSession } from "next-auth";
 
 const Feedbacks = async () => {
   const session = await getServerSession(authOptions);
@@ -18,7 +18,7 @@ const Feedbacks = async () => {
         <Filter />
         <div className="flex flex-col gap-6 col-span-3">
           <Header />
-          <Feedback />
+          <FeedbacksComp />
         </div>
       </div>
     </div>
