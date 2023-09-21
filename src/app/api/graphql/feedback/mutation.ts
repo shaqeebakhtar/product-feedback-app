@@ -20,7 +20,31 @@ export const feedbackMutation = {
         title,
         tag,
         details,
-        creatorId: session?.user.id,
+        creatorId: session?.user.id as string,
+      },
+    });
+
+    return feedback;
+  },
+
+  upvote: async (obj: any, { feedbackId }: { feedbackId: string }) => {
+    const session = await getServerSession(authOptions);
+
+    await prisma.userUpvotes.create({
+      data: {
+        feedbackId,
+        userId: session?.user.id as string,
+      },
+    });
+
+    const feedback = await prisma.feedback.update({
+      where: {
+        id: feedbackId,
+      },
+      data: {
+        upvotes: {
+          increment: 1,
+        },
       },
     });
 

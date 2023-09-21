@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  email     String
-  password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  feedbacks Feedback[]
+  id               String        @id @default(uuid())
+  email            String
+  password         String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  feedbacks        Feedback[]
+  upvotedFeedbacks UserUpvotes[]
 
   @@unique([email])
 }
@@ -29,17 +30,18 @@ model Username {
 }
 
 model Feedback {
-  id               String    @id @default(uuid())
+  id               String        @id @default(uuid())
   title            String
   tag              String
-  details          String    @db.Text
-  upvotes          Int       @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  numberOfComments Int       @default(0)
-  creator          User      @relation(fields: [creatorId], references: [id])
+  details          String        @db.Text
+  upvotes          Int           @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  numberOfComments Int           @default(0)
+  creator          User          @relation(fields: [creatorId], references: [id])
   creatorId        String
   comments         Comment[]
+  upvotedBy        UserUpvotes[]
 }
 
 model Comment {
@@ -62,4 +64,15 @@ model Reply {
   updatedAt DateTime @updatedAt
   comment   Comment  @relation(fields: [commentId], references: [id])
   commentId String
+}
+
+model UserUpvotes {
+  id         String   @id @default(uuid())
+  userId     String
+  feedbackId String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+
+  @@unique([userId, feedbackId])
 }

@@ -73,7 +73,8 @@ const CreateFeedback = () => {
       details: data.details,
     });
 
-    if (addFeedbackMutation?.data.addFeedback) router.push("/feedbacks");
+    if (!addFeedbackMutation.isLoading && addFeedbackMutation?.data.addFeedback)
+      router.push("/feedbacks");
   };
 
   return (

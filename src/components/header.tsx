@@ -1,6 +1,5 @@
-"use client";
-
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Logout from "./logout";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
@@ -11,19 +10,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useRouter } from "next/navigation";
 
-const Header = () => {
+type Props = {
+  sort: string;
+  setSort: (value: string) => void;
+};
+
+const Header = ({ sort, setSort }: Props) => {
   const router = useRouter();
 
   return (
-    <header>
-      <div className="bg-slate-800 px-4 py-3 rounded-lg flex justify-between items-center sticky top-8 shadow-lg">
+    <header className="sticky top-8">
+      <div className="bg-slate-800 px-4 py-3 rounded-lg flex justify-between items-center shadow-lg">
         <div className="flex items-center text-white">
           <Label htmlFor="sort-feedbacks" className="text-sm font-normal">
             Sort by:
           </Label>
-          <Select defaultValue="most upvotes">
+
+          <Select
+            defaultValue="mostUpvotes"
+            value={sort}
+            onValueChange={setSort}
+          >
             <SelectTrigger
               id="sort-feedbacks"
               className="w-[160px] text-white bg-transparent border-none font-bold"
@@ -33,25 +41,25 @@ const Header = () => {
             <SelectContent className="w-[200px] text-slate-500">
               <SelectItem
                 className="py-3 border-b-2 border-slate-100 focus:bg-transparent focus:text-purple-600"
-                value="most upvotes"
+                value="mostUpvotes"
               >
                 Most Upvotes
               </SelectItem>
               <SelectItem
                 className="py-3 border-b-2 border-slate-100 focus:bg-transparent focus:text-purple-600"
-                value="least upvotes"
+                value="leastUpvotes"
               >
                 Least Upvotes
               </SelectItem>
               <SelectItem
                 className="py-3 border-b-2 border-slate-100 focus:bg-transparent focus:text-purple-600"
-                value="most comments"
+                value="mostComments"
               >
                 Most Comments
               </SelectItem>
               <SelectItem
                 className="py-3 focus:bg-transparent focus:text-purple-600"
-                value="least comments"
+                value="leastComments"
               >
                 Least Comments
               </SelectItem>
