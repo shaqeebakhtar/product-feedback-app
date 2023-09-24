@@ -12,6 +12,9 @@ const FEEDBACKS = gql`
       details
       upvotes
       numberOfComments
+      upvotedBy {
+        userId
+      }
     }
   }
 `;

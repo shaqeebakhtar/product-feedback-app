@@ -25,6 +25,6 @@ export const feedbackTypes = `#graphql
     type Mutation{
         addFeedback(title: String!, tag: String!, details: String!): Feedback
 
-        upvote(feedbackId: String!): Feedback!
+        upvote(feedbackId: String!, voteValue: Int!): Feedback!
     }
 `;

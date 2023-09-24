@@ -1,5 +1,7 @@
 import prisma from "@/lib/db";
+import { getServerSession } from "next-auth";
 import { z } from "zod";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 const getFeedbackSchema = z.object({
   feedbackId: z.string(),
@@ -24,6 +26,9 @@ export const feedbackQuery = {
       sortField = "numberOfComments";
     }
 
+    const session = await getServerSession(authOptions);
+    console.log(session?.user);
+
     if (filterTag && filterTag !== "all" && sort == "mostUpvotes") {
       feedbacks = await prisma.feedback.findMany({
         orderBy: {
@@ -31,6 +36,13 @@ export const feedbackQuery = {
         },
         where: {
           tag: filterTag,
+        },
+        include: {
+          upvotedBy: {
+            where: {
+              userId: session?.user.id,
+            },
+          },
         },
       });
     } else if (sort && sort !== "mostUpvotes" && filterTag == "all") {
@@ -40,6 +52,13 @@ export const feedbackQuery = {
             sort === "leastUpvotes" || sort === "leastComments"
               ? "asc"
               : "desc",
+        },
+        include: {
+          upvotedBy: {
+            where: {
+              userId: session?.user.id,
+            },
+          },
         },
       });
     } else if (
@@ -58,11 +77,25 @@ export const feedbackQuery = {
         where: {
           tag: filterTag,
         },
+        include: {
+          upvotedBy: {
+            where: {
+              userId: session?.user.id,
+            },
+          },
+        },
       });
     } else if (filterTag == "all" && sort == "mostUpvotes") {
       feedbacks = await prisma.feedback.findMany({
         orderBy: {
           [sortField]: "desc",
+        },
+        include: {
+          upvotedBy: {
+            where: {
+              userId: session?.user.id,
+            },
+          },
         },
       });
     }

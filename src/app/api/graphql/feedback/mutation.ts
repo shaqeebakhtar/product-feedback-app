@@ -27,27 +27,49 @@ export const feedbackMutation = {
     return feedback;
   },
 
-  upvote: async (obj: any, { feedbackId }: { feedbackId: string }) => {
+  upvote: async (
+    obj: any,
+    {
+      feedbackId,
+      voteValue,
+    }: {
+      feedbackId: string;
+      voteValue: number;
+    }
+  ) => {
     const session = await getServerSession(authOptions);
 
-    await prisma.userUpvotes.create({
-      data: {
-        feedbackId,
-        userId: session?.user.id as string,
-      },
-    });
+    let vote = null;
 
-    const feedback = await prisma.feedback.update({
-      where: {
-        id: feedbackId,
-      },
-      data: {
-        upvotes: {
-          increment: 1,
+    if (voteValue === 1) {
+      vote = await prisma.userUpvotes.create({
+        data: {
+          userId: session?.user.id!,
+          feedbackId,
         },
-      },
-    });
+      });
+    } else {
+      vote = await prisma.userUpvotes.delete({
+        where: {
+          userId_feedbackId: {
+            userId: session?.user.id!,
+            feedbackId,
+          },
+        },
+      });
+    }
 
-    return feedback;
+    if (vote) {
+      return await prisma.feedback.update({
+        where: {
+          id: feedbackId,
+        },
+        data: {
+          upvotes: {
+            increment: voteValue,
+          },
+        },
+      });
+    }
   },
 };

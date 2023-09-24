@@ -1,11 +1,10 @@
 import { graphQLClient } from "@/lib/graphql-client";
 import { useMutation } from "@tanstack/react-query";
 import { gql } from "graphql-request";
-import { useGetFeedbacks } from "./useGetFeedbacks";
 
 const UPOVTE_FEEDBACK = gql`
-  mutation Upvote($feedbackId: String!) {
-    upvote(feedbackId: $feedbackId) {
+  mutation Upvote($feedbackId: String!, $voteValue: Int!) {
+    upvote(feedbackId: $feedbackId, voteValue: $voteValue) {
       id
       title
       tag
@@ -20,17 +19,19 @@ const UPOVTE_FEEDBACK = gql`
 `;
 
 export const useOnUpvote = () => {
-  const feedbacksQuery = useGetFeedbacks();
-
   const upvoteMutation = useMutation({
     mutationKey: ["upvote"],
-    mutationFn: async ({ feedbackId }: { feedbackId: string }) => {
+    mutationFn: async ({
+      feedbackId,
+      voteValue,
+    }: {
+      feedbackId: string;
+      voteValue: number;
+    }) => {
       return await graphQLClient.request(UPOVTE_FEEDBACK, {
         feedbackId,
+        voteValue,
       });
-    },
-    onSuccess: () => {
-      feedbacksQuery.refetch();
     },
   });
 
